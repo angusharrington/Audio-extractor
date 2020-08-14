@@ -22,21 +22,27 @@ def two_language_audio_extractor(sound_path_1, sound_path_2, extracted_1, extrac
 
 
 
-    idx = slice(*librosa.time_to_frames([0, 5], sr=sr))
+    idx = slice(*librosa.time_to_frames([32, 33], sr=sr))
     plt.figure(figsize=(12, 4))
     librosa.display.specshow(librosa.amplitude_to_db(S_full1[:, idx], ref=np.max),
                          y_axis='log', x_axis='time', sr=sr)
     plt.colorbar()
     plt.tight_layout()
 
-    idx = slice(*librosa.time_to_frames([0, 5], sr=sr))
+    idx = slice(*librosa.time_to_frames([32, 33], sr=sr))
     plt.figure(figsize=(12, 4))
     librosa.display.specshow(librosa.amplitude_to_db(S_full2[:, idx], ref=np.max),
                          y_axis='log', x_axis='time', sr=sr)
     plt.colorbar()
     plt.tight_layout()
-    S1 = S_full1 - S_full2
-    S2 = S_full2 - S_full1
+
+    S_full1 = S_full1[:,:7000]
+    S_full2 = S_full2[:,:7000]
+    phase1 = phase1[:,:7000]
+    phase2 = phase2[:,:7000]
+
+    S1 = S_full1 - 3*S_full2
+    S2 = S_full2 - 3*S_full1
 
     for i in range (S1.shape[0]):
         for j in range (S1.shape[1]):
@@ -46,14 +52,14 @@ def two_language_audio_extractor(sound_path_1, sound_path_2, extracted_1, extrac
                 S2[i][j] = 0
 
 
-    idx = slice(*librosa.time_to_frames([0, 5], sr=sr))
+    idx = slice(*librosa.time_to_frames([32, 33], sr=sr))
     plt.figure(figsize=(12, 4))
     librosa.display.specshow(librosa.amplitude_to_db(S1[:, idx], ref=np.max),
                          y_axis='log', x_axis='time', sr=sr)
     plt.colorbar()
     plt.tight_layout()
 
-    idx = slice(*librosa.time_to_frames([0, 5], sr=sr))
+    idx = slice(*librosa.time_to_frames([32, 33], sr=sr))
     plt.figure(figsize=(12, 4))
     librosa.display.specshow(librosa.amplitude_to_db(S2[:, idx], ref=np.max),
                          y_axis='log', x_axis='time', sr=sr)
@@ -79,5 +85,8 @@ def two_language_audio_extractor(sound_path_1, sound_path_2, extracted_1, extrac
     h2 = librosa.core.istft(S2*phase2)
 
     return write_wav(extracted_1, h1), write_wav(extracted_2, h2)
+#%%
+two_language_audio_extractor('/Users/angusharrington/Desktop/facial recognition/soundfiles/chinese-audio-avatar.mp3', '/Users/angusharrington/Desktop/facial recognition/soundfiles/English-Audio-Avatar-extended.mp3', 'chinese_extracted.wav', 'english_extracted.wav')
 
 
+# %%
